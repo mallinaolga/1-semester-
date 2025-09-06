@@ -1,0 +1,12 @@
+name: Show Date and Time
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  show-datetime:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print Moscow time
+        run: TZ=Europe/Moscow date

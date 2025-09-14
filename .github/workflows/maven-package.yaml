@@ -1,0 +1,50 @@
+name: Maven Package and Push
+
+on:
+  pull_request:
+    branches: [ main, master, develop ]
+  push:
+    branches: [ feature/** ]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Build with Maven
+        run: mvn package -DskipTests
+
+      - name: Build and verify
+        run: |
+          mvn clean compile
+          echo "Compilation completed"
+
+          mvn package -DskipTests  mvn package
+
+          if [ -d "target" ]; then
+            echo "Target directory exists"
+            ls -la target/
+            find target/ -name "*.jar" 2>/dev/null  echo "No JAR files found"
+          else
+            echo "Target directory not found"
+          fi
+
+      - name: Push to branch (optional)
+        if: github.event_name == 'push'
+        run: |
+          echo "Push event detected, current branch: ${{ github.ref }}"
+
+      - name: Success notification
+        run: echo "Maven package completed successfully on branch ${{ github.ref }}"

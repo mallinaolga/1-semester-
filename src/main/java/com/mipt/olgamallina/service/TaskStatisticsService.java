@@ -1,4 +1,3 @@
-
 package com.mipt.olgamallina.service;
 
 import com.mipt.olgamallina.repository.StubTaskRepository;
@@ -7,6 +6,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+/**
+ * Demonstrates @Primary and @Qualifier injection.
+ */
 @Service
 public class TaskStatisticsService {
 

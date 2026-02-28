@@ -1,18 +1,17 @@
+
 package com.mipt.olgamallina.service;
 
+import com.mipt.olgamallina.repository.StubTaskRepository;
 import com.mipt.olgamallina.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-/**
- * Service that demonstrates @Primary and @Qualifier by injecting two repositories.
- */
 @Service
 public class TaskStatisticsService {
 
     private final TaskRepository primaryRepository;
-    private final TaskRepository stubRepository;
+    private final StubTaskRepository stubRepository;
 
     @Value("${app.name:todo-list-manager}")
     private String appName;
@@ -22,7 +21,7 @@ public class TaskStatisticsService {
 
     public TaskStatisticsService(
             TaskRepository primaryRepository,
-            @Qualifier("stubTaskRepository") TaskRepository stubRepository
+            @Qualifier("stubTaskRepository") StubTaskRepository stubRepository
     ) {
         this.primaryRepository = primaryRepository;
         this.stubRepository = stubRepository;

@@ -98,7 +98,7 @@ public class TaskUpdateDto implements TaskDueDateCheck {
     }
 
     public void setTags(Set<String> tags) {
-        this.tags = tags != null ? tags : new HashSet<>();
+        this.tags = tags != null ? new HashSet<>(tags) : new HashSet<>();
     }
 
     public void setCreatedAt(LocalDateTime createdAt) {

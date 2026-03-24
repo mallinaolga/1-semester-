@@ -10,6 +10,7 @@ import org.mapstruct.factory.Mappers;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -46,7 +47,7 @@ class TaskMapperTest {
         task.setCompleted(false);
         task.setCreatedAt(LocalDateTime.now());
         task.setPriority(Priority.LOW);
-        task.setTags(Set.of("old"));
+        task.setTags(new HashSet<>(Set.of("old")));
 
         TaskUpdateDto dto = new TaskUpdateDto();
         dto.setTitle("New title");

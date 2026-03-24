@@ -92,6 +92,6 @@ public class Task {
     }
 
     public void setTags(Set<String> tags) {
-        this.tags = tags != null ? tags : new HashSet<>();
+        this.tags = tags != null ? new HashSet<>(tags) : new HashSet<>();
     }
 }

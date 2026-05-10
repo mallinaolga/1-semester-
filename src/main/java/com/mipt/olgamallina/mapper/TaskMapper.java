@@ -4,11 +4,7 @@ import com.mipt.olgamallina.dto.TaskCreateDto;
 import com.mipt.olgamallina.dto.TaskResponseDto;
 import com.mipt.olgamallina.dto.TaskUpdateDto;
 import com.mipt.olgamallina.model.Task;
-import org.mapstruct.BeanMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
 public interface TaskMapper {
@@ -16,12 +12,16 @@ public interface TaskMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "completed", constant = "false")
     @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "attachments", ignore = true)
     Task toEntity(TaskCreateDto dto);
+
+    TaskResponseDto toDto(Task task);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
-    void updateEntity(TaskUpdateDto dto, @MappingTarget Task task);
-
-    TaskResponseDto toResponseDto(Task task);
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "attachments", ignore = true)
+    void update(@MappingTarget Task task, TaskUpdateDto dto);
 }

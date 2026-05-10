@@ -1,84 +1,33 @@
 package com.mipt.olgamallina.model;
 
+import jakarta.persistence.*;
+import lombok.*;
+
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "task_attachments")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class TaskAttachment {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long taskId;
+
+    @Column(name = "file_name", nullable = false)
     private String fileName;
-    private String storedFileName;
-    private String contentType;
-    private long size;
+
+    @Column(name = "file_path", nullable = false)
+    private String filePath;
+
+    @Column(name = "uploaded_at", nullable = false)
     private LocalDateTime uploadedAt;
 
-    public TaskAttachment() {
-    }
-
-    public TaskAttachment(Long id, Long taskId, String fileName, String storedFileName,
-                          String contentType, long size, LocalDateTime uploadedAt) {
-        this.id = id;
-        this.taskId = taskId;
-        this.fileName = fileName;
-        this.storedFileName = storedFileName;
-        this.contentType = contentType;
-        this.size = size;
-        this.uploadedAt = uploadedAt;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public Long getTaskId() {
-        return taskId;
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public String getStoredFileName() {
-        return storedFileName;
-    }
-
-    public String getContentType() {
-        return contentType;
-    }
-
-    public long getSize() {
-        return size;
-    }
-
-    public LocalDateTime getUploadedAt() {
-        return uploadedAt;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setTaskId(Long taskId) {
-        this.taskId = taskId;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
-    public void setStoredFileName(String storedFileName) {
-        this.storedFileName = storedFileName;
-    }
-
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
-    }
-
-    public void setSize(long size) {
-        this.size = size;
-    }
-
-    public void setUploadedAt(LocalDateTime uploadedAt) {
-        this.uploadedAt = uploadedAt;
-    }
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "task_id", nullable = false)
+    private Task task;
 }

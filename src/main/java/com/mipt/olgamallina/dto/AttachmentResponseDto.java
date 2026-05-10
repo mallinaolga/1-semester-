@@ -1,56 +1,14 @@
 package com.mipt.olgamallina.dto;
 
-import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
-@Schema(description = "Attachment metadata response")
+@Data
 public class AttachmentResponseDto {
-
     private Long id;
     private String fileName;
-    private long size;
+    private String filePath;
     private LocalDateTime uploadedAt;
-
-    public AttachmentResponseDto() {
-    }
-
-    public AttachmentResponseDto(Long id, String fileName, long size, LocalDateTime uploadedAt) {
-        this.id = id;
-        this.fileName = fileName;
-        this.size = size;
-        this.uploadedAt = uploadedAt;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public long getSize() {
-        return size;
-    }
-
-    public LocalDateTime getUploadedAt() {
-        return uploadedAt;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
-    public void setSize(long size) {
-        this.size = size;
-    }
-
-    public void setUploadedAt(LocalDateTime uploadedAt) {
-        this.uploadedAt = uploadedAt;
-    }
+    private Long taskId;
 }

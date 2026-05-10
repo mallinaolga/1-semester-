@@ -5,78 +5,81 @@ import com.mipt.olgamallina.dto.TaskResponseDto;
 import com.mipt.olgamallina.dto.TaskUpdateDto;
 import com.mipt.olgamallina.model.Priority;
 import com.mipt.olgamallina.model.Task;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class TaskMapperTest {
 
-    private final TaskMapper mapper = Mappers.getMapper(TaskMapper.class);
+    private final TaskMapper taskMapper = Mappers.getMapper(TaskMapper.class);
 
     @Test
-    void toEntity_shouldMapCreateDto() {
+    @DisplayName("toEntity должен корректно маппить TaskCreateDto -> Task")
+    void shouldMapCreateDtoToEntity() {
         TaskCreateDto dto = new TaskCreateDto();
-        dto.setTitle("Task title");
-        dto.setDescription("Task description");
-        dto.setDueDate(LocalDate.now().plusDays(1));
+        dto.setTitle("New task");
+        dto.setDescription("Description");
         dto.setPriority(Priority.HIGH);
-        dto.setTags(Set.of("study", "spring"));
+        dto.setDueDate(LocalDateTime.now().plusDays(1));
+        dto.setTags(Set.of("study", "java"));
 
-        Task task = mapper.toEntity(dto);
+        Task task = taskMapper.toEntity(dto);
 
-        assertNull(task.getId());
-        assertEquals("Task title", task.getTitle());
-        assertEquals("Task description", task.getDescription());
-        assertFalse(task.isCompleted());
-        assertEquals(Priority.HIGH, task.getPriority());
-        assertEquals(Set.of("study", "spring"), task.getTags());
+        assertThat(task.getId()).isNull();
+        assertThat(task.getTitle()).isEqualTo("New task");
+        assertThat(task.getDescription()).isEqualTo("Description");
+        assertThat(task.isCompleted()).isFalse();
+        assertThat(task.getPriority()).isEqualTo(Priority.HIGH);
+        assertThat(task.getTags()).containsExactlyInAnyOrder("study", "java");
     }
 
     @Test
-    void updateEntity_shouldIgnoreNulls() {
-        Task task = new Task();
-        task.setId(1L);
-        task.setTitle("Old title");
-        task.setDescription("Old description");
-        task.setCompleted(false);
-        task.setCreatedAt(LocalDateTime.now());
-        task.setPriority(Priority.LOW);
-        task.setTags(new HashSet<>(Set.of("old")));
+    @DisplayName("toDto должен корректно маппить Task -> TaskResponseDto")
+    void shouldMapEntityToDto() {
+        Task task = Task.builder()
+                .id(10L)
+                .title("Task")
+                .description("Desc")
+                .completed(true)
+                .priority(Priority.MEDIUM)
+                .dueDate(LocalDateTime.now().plusDays(2))
+                .tags(Set.of("work"))
+                .build();
+
+        TaskResponseDto dto = taskMapper.toDto(task);
+
+        assertThat(dto.getId()).isEqualTo(10L);
+        assertThat(dto.getTitle()).isEqualTo("Task");
+        assertThat(dto.isCompleted()).isTrue();
+        assertThat(dto.getPriority()).isEqualTo(Priority.MEDIUM);
+        assertThat(dto.getTags()).contains("work");
+    }
+
+    @Test
+    @DisplayName("update должен частично обновлять сущность")
+    void shouldPartiallyUpdateEntity() {
+        Task task = Task.builder()
+                .id(1L)
+                .title("Old")
+                .description("Old desc")
+                .completed(false)
+                .priority(Priority.LOW)
+                .build();
 
         TaskUpdateDto dto = new TaskUpdateDto();
-        dto.setTitle("New title");
+        dto.setTitle("New");
+        dto.setCompleted(true);
 
-        mapper.updateEntity(dto, task);
+        taskMapper.update(task, dto);
 
-        assertEquals("New title", task.getTitle());
-        assertEquals("Old description", task.getDescription());
-        assertEquals(Priority.LOW, task.getPriority());
-    }
-
-    @Test
-    void toResponseDto_shouldMapTask() {
-        Task task = new Task();
-        task.setId(1L);
-        task.setTitle("Task");
-        task.setDescription("Desc");
-        task.setCompleted(true);
-        task.setCreatedAt(LocalDateTime.now());
-        task.setDueDate(LocalDate.now().plusDays(2));
-        task.setPriority(Priority.MEDIUM);
-        task.setTags(Set.of("tag1"));
-
-        TaskResponseDto dto = mapper.toResponseDto(task);
-
-        assertEquals(1L, dto.getId());
-        assertEquals("Task", dto.getTitle());
-        assertEquals("Desc", dto.getDescription());
-        assertTrue(dto.isCompleted());
-        assertEquals(Priority.MEDIUM, dto.getPriority());
+        assertThat(task.getTitle()).isEqualTo("New");
+        assertThat(task.isCompleted()).isTrue();
+        assertThat(task.getDescription()).isEqualTo("Old desc");
+        assertThat(task.getPriority()).isEqualTo(Priority.LOW);
     }
 }

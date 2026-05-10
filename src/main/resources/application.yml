@@ -1,25 +1,61 @@
 server:
   port: 8080
-  error:
-    include-message: always
-    include-binding-errors: always
-  servlet:
-    session:
-      cookie:
-        http-only: true
-
-spring:
-  mvc:
-    throw-exception-if-no-handler-found: true
-  web:
-    resources:
-      add-mappings: false
-  servlet:
-    multipart:
-      max-file-size: 10MB
-      max-request-size: 10MB
 
 app:
-  api:
-    version: "2.0.0"
-  upload-dir: uploads
+  author: olgamallina
+  external:
+    base-url: http://localhost:${server.port}/external
+  security:
+    pepper: olgamallina-local-dev-pepper-change-me
+  jwt:
+    secret: 9d861b5b3a2e45e0abdb3cfc047c1d7c3db9cc46e6b5479c9cf0f8344e53cc29
+    expiration: 10m
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,circuitbreakers,ratelimiters
+  endpoint:
+    health:
+      show-details: always
+  health:
+    circuitbreakers:
+      enabled: true
+    ratelimiters:
+      enabled: true
+
+logging:
+  level:
+    root: INFO
+    olgamallina: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} trace=%X{traceId} - %msg%n"
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      externalApi:
+        registerHealthIndicator: true
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        recordExceptions:
+          - java.io.IOException
+          - java.net.http.HttpTimeoutException
+          - org.springframework.web.client.ResourceAccessException
+          - org.springframework.web.client.HttpServerErrorException
+          - exception.ExternalApiException
+        ignoreExceptions:
+          - exception.TaskNotFoundException
+
+  ratelimiter:
+    instances:
+      externalApi:
+        limitForPeriod: 5
+        limitRefreshPeriod: 10s
+        timeoutDuration: 0s

@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 public class TaskService {
 
     private final TaskRepository taskRepository;
@@ -27,18 +28,23 @@ public class TaskService {
         this.taskMapper = taskMapper;
     }
 
+    @Transactional
     public TaskResponseDto create(TaskCreateDto dto) {
         Task task = taskMapper.toEntity(dto);
         Task saved = taskRepository.save(task);
         return taskMapper.toDto(saved);
     }
 
+    @Transactional
     public TaskResponseDto update(Long id, TaskUpdateDto dto) {
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new TaskNotFoundException("Task not found: " + id));
 
         taskMapper.update(task, dto);
+
+        // save можно оставить, хотя для managed-сущности Hibernate и так сохранит изменения
         Task saved = taskRepository.save(task);
+
         return taskMapper.toDto(saved);
     }
 

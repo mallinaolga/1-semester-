@@ -82,6 +82,8 @@ public class SecurityConfig {
 
                         .requestMatchers(HttpMethod.GET, "/api/v1/profile").hasRole("USER")
                         .requestMatchers(HttpMethod.GET, "/api/v1/docs").hasAuthority("READ_PRIVILEGE")
+
+                        .requestMatchers("/api/tasks/**").hasRole("USER")
                         .requestMatchers("/api/v1/tasks/**").hasRole("USER")
 
                         .anyRequest().authenticated()

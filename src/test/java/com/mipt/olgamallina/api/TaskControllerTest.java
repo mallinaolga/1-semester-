@@ -3,6 +3,7 @@ package com.mipt.olgamallina.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mipt.olgamallina.dto.TaskCreateRequest;
 import com.mipt.olgamallina.dto.TaskResponse;
+import com.mipt.olgamallina.security.JwtUtils;
 import com.mipt.olgamallina.service.TaskService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -31,6 +33,12 @@ class TaskControllerTest {
 
     @MockBean
     private TaskService taskService;
+
+    @MockBean
+    private JwtUtils jwtUtils;
+
+    @MockBean
+    private UserDetailsService userDetailsService;
 
     @Test
     void createShouldReturn201AndJsonBody() throws Exception {
